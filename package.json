@@ -1,0 +1,20 @@
+{
+  "name": "expermit-win",
+  "private": true,
+  "version": "0.1.4",
+  "description": "ExPermit 实验记录本 · Windows 桌面版（壳与打包，源码在 expermit-eln）",
+  "main": "app/shell/main.cjs",
+  "scripts": {
+    "fetch": "node scripts/fetch-core.mjs",
+    "fetch:local": "node scripts/fetch-core.mjs --core ../expermit-eln",
+    "dist": "node scripts/fetch-core.mjs --core ../expermit-eln && electron-builder --win",
+    "selftest": "node scripts/selftest.mjs"
+  },
+  "dependencies": {
+    "fflate": "0.8.3"
+  },
+  "devDependencies": {
+    "electron": "45.0.0",
+    "electron-builder": "26.18.0"
+  }
+}

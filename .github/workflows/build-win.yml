@@ -1,0 +1,39 @@
+name: Build Windows
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 核心版本号（如 0.1.4，需核心仓已发布含 www/shell 制品的 Release）
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm install
+      - name: 取核心制品
+        run: node scripts/fetch-core.mjs --ver ${{ inputs.version }}
+      - name: 打包
+        run: npx electron-builder --win
+      - name: 自检
+        run: node scripts/selftest.mjs
+      - name: 发布
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VER="${{ inputs.version }}"
+          TAG="v$VER"
+          gh release view "$TAG" >/dev/null 2>&1 || \
+            gh release create "$TAG" --title "Windows v$VER" --notes "由核心 v$VER 构建"
+          gh release upload "$TAG" "release/ExPermit-Setup-$VER.exe" "release/ExPermit-Portable-$VER.exe" --clobber
+          echo "已发布 Windows v$VER"
