@@ -23,7 +23,7 @@ jobs:
       - name: 取核心制品
         run: node scripts/fetch-core.mjs --ver ${{ inputs.version }}
       - name: 打包
-        run: npx electron-builder --win
+        run: npx electron-builder --win --publish never
       - name: 自检
         run: node scripts/selftest.mjs
       - name: 发布
